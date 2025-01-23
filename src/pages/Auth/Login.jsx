@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useState, useContext } from 'react';
 
 import Box from '@mui/material/Box';
@@ -15,9 +14,9 @@ import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
-import { apiClient, loginApi } from '../../config/api';
-import { AppContext } from '../../../context/AppContext';
+import { loginApi } from '../../configs/api';
 import { useNavigate } from 'react-router-dom';
+import { AppContext } from '../../contexts/AppContext';
 // import ForgotPassword from './ForgotPassword';
 // import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
 // import AppTheme from '../shared-theme/AppTheme';
@@ -65,7 +64,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-export default function Login(props) {
+export default function Login() {
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -109,7 +108,7 @@ export default function Login(props) {
     if (response.errors) {
       setErrors(prev => ({
         ...prev,
-        submit: error.response?.data?.message || 'Login failed'
+        submit: errors.response?.data?.message || 'Login failed'
       }));
     }
     const token = response.data.token

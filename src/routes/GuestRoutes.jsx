@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { Navigate, Outlet } from "react-router-dom";
+import { AppContext } from "../contexts/AppContext";
 
-import { AppContext } from "../../context/AppContext";
 
 const GuestRoutes = () => {
   const { user } = useContext(AppContext);

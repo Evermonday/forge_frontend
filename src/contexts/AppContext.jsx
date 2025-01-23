@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { getUserApi } from "../src/config/api";
+import { getUserApi } from "../configs/api";
 
 export const AppContext = createContext();
 
@@ -9,7 +9,7 @@ export default function AppProvider({children}) {
     
     async function getUser() {
         if(token){
-            const user = await getUserApi(token);
+            const user = await getUserApi();
             setUser(user.data);
         }
     }

@@ -1,8 +1,9 @@
-import { Outlet, useLocation } from 'react-router-dom';
-import ProjectCard from './ProjectCard';
-import { Typography } from '@mui/material';
+import { Outlet, useNavigate } from 'react-router-dom';
+import ProjectCard from './ScenarioCard';
+import { Button, List, ListItem, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
-import { useState } from 'react';
+import { useState, use, useEffect, Suspense } from 'react';
+import { AppContext } from '../../contexts/AppContext'
 import {
   FormControl,
   FormLabel,
@@ -10,8 +11,10 @@ import {
   FormControlLabel,
   Radio,
 } from '@mui/material';
+import { getScenariosApi } from '../../configs/api';
 
 function ParentComponent({ unit, setUnit }) {
+  console.log('here')
   return (
     <>
       <Box
@@ -53,11 +56,11 @@ function NoChildComponent({ unit }) {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <Box>
-        <Typography variant='h2'>Project</Typography>
+        <Typography variant='h2'>Scenarios</Typography>
         <Typography>List of Scenarios</Typography>
       </Box>
       <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-        {[1, 2, 3, 4, 5, 6].map((item) => (
+        {[1].map((item) => (
           <ProjectCard key={item} id={item} />
         ))}
       </Box>
@@ -65,14 +68,36 @@ function NoChildComponent({ unit }) {
   );
 }
 
-export default function Projects() {
+export default function Scenarios() {
   const [unit, setUnit] = useState('metric'); // metric, imperial
+  const [scenarios, setScenarios] = useState([]); // metric, imperial
+  const navigate = useNavigate();
+  
+  
+  useEffect( () =>{
+    async function fetchScenarios(){
+      const response = await getScenariosApi();
+      const scenarioResponse = Array.isArray(response.data) ? response.data : [] ;
+      setScenarios(scenarioResponse);
+    }
 
-  const location = useLocation();
-  const hasChildren = location.pathname.includes('scenario');
-  return hasChildren ? (
-    <ParentComponent setUnit={setUnit} unit={unit} />
-  ) : (
-    <NoChildComponent unit={unit} />
-  );
+    fetchScenarios()
+  }, [])
+  const hasChildren = true;
+
+  return (
+    <Box>
+      <Button onClick={() => navigate('scenario/new')}>From Scratch</Button>
+      <List>
+          {scenarios.map(scenario =>
+            <ListItem key={scenario.id} value={scenario.id}>
+              <Box>
+                {scenario.name}
+                <Button onClick={() => navigate(`scenario/${scenario.id}`)}>View</Button>
+              </Box>
+            </ListItem>
+          )}
+      </List>
+    </Box>
+  )
 }

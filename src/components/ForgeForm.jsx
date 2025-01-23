@@ -170,53 +170,38 @@ export const ForgeField = ({
 };
 
 export const ForgeSelect = ({ label, name, onChange, value, list }) => {
-  let listType = 'array';
-  if (list && typeof list[0] === 'object') {
-    listType = 'object';
-  }
-  useEffect(() => {
-    if (list?.length && !value) {
-      onChange({
-        target: {
-          name,
-          value: typeof list[0] === 'object' ? list[0].value : list[0],
-        },
-      });
-    }
-  }, [list]);
+  // useEffect(() => {
+  //   if (list?.length && !value) {
+  //     onChange({
+  //       target: {
+  //         name,
+  //         value: typeof list[0] === 'object' ? list[0].value : list[0],
+  //       },
+  //     });
+  //   }
+  // }, [list]);
   return (
     <FormControl fullWidth>
       <ForgeFieldLabel>{label}</ForgeFieldLabel>
       <CustomSelect
-        id={name}
+        id={value.id}
         name={name}
         value={value}
         onChange={onChange}
         IconComponent={() => <KeyboardArrowDown sx={{ color: '#lightgray' }} />}
       >
-        {listType === 'array'
-          ? list.map((item) => (
+          { list.map((item) => (
               <MenuItem
-                key={nanoid()}
+                key={item.id}
                 value={item}
                 sx={{
                   fontFamily: 'League Spartan',
                 }}
               >
-                {item}
+                {item.name}
               </MenuItem>
             ))
-          : list.map((item) => (
-              <MenuItem
-                key={nanoid()}
-                value={item.value}
-                sx={{
-                  fontFamily: 'League Spartan',
-                }}
-              >
-                {item.title}
-              </MenuItem>
-            ))}
+          }
       </CustomSelect>
     </FormControl>
   );

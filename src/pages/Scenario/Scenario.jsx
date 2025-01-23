@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Container } from '@mui/material';
 import { GeneralTab } from './Tabs/GeneralTab';
 import { ScheduleTab } from './Tabs/ScheduleTab';
-import { ScenarioProvider } from './ScenarioContext';
+import { ScenarioProvider } from '../../contexts/ScenarioContext';
 import { styled } from '@mui/material/styles';
 import { useOutletContext } from 'react-router-dom';
 import JsonPreview from './Tabs/JsonPreview';
@@ -22,7 +22,7 @@ import AnalyticsIcon from '@mui/icons-material/Analytics';
 import DataObjectIcon from '@mui/icons-material/DataObject';
 
 const TabsContainer = styled(Box)({
-  position: 'fixed',
+  // position: 'fixed',
   left: 0,
   width: '280px',
   padding: '30px 0px',
@@ -80,7 +80,7 @@ function ScenarioTabs({ unit }) {
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ }}>
       <TabsContainer>
         <Tabs
           sx={{ height: '800px' }}
@@ -174,7 +174,7 @@ function ScenarioTabs({ unit }) {
       </TabsContainer>
       <Container>
         <CustomTabPanel value={value} index={0}>
-          <GeneralTab unit={unit} />
+          
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
           <ScheduleTab unit={unit} />
@@ -190,13 +190,13 @@ function ScenarioTabs({ unit }) {
   );
 }
 
-export default function Scenario() {
+export default function Scenario({project}) {
   const unit = useOutletContext();
 
   return (
     <>
       <ScenarioProvider>
-        <ScenarioTabs unit={unit} />
+        <GeneralTab unit={unit} />
       </ScenarioProvider>
     </>
   );

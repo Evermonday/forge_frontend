@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import { registerApi } from '../../config/api'
+import { registerApi } from '../../configs/api'
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -12,7 +12,7 @@ import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
-import { AppContext } from '../../../context/AppContext';
+import { AppContext } from '../../contexts/AppContext';
 // import AppTheme from '../shared-theme/AppTheme';
 // import { GoogleIcon, FacebookIcon, SitemarkIcon } from './CustomIcons';
 // import ColorModeSelect from '../shared-theme/ColorModeSelect';

@@ -16,7 +16,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Stack from '@mui/material/Stack';
 import { styled } from '@mui/material/styles';
 import { logoutApi } from '../config/api';
-import { AppContext } from '../../context/AppContext';
+import { AppContext } from '../contexts/AppContext';
 
 
 const pages = ['Products', 'Pricing', 'Blog'];

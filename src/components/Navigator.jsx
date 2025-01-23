@@ -6,42 +6,46 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import HomeIcon from '@mui/icons-material/Home';
-import PeopleIcon from '@mui/icons-material/People';
-import DnsRoundedIcon from '@mui/icons-material/DnsRounded';
-import PermMediaOutlinedIcon from '@mui/icons-material/PhotoSizeSelectActual';
-import PublicIcon from '@mui/icons-material/Public';
-import SettingsEthernetIcon from '@mui/icons-material/SettingsEthernet';
-import SettingsInputComponentIcon from '@mui/icons-material/SettingsInputComponent';
+import AllOutIcon from '@mui/icons-material/AllOut';
+import DashboardIcon from '@mui/icons-material/Dashboard';
+import EventIcon from '@mui/icons-material/Event';
+import ConstructionIcon from '@mui/icons-material/Construction';
+import TerrainIcon from '@mui/icons-material/Terrain';
+import HomeWorkIcon from '@mui/icons-material/HomeWork';
+import SellIcon from '@mui/icons-material/Sell';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import TimerIcon from '@mui/icons-material/Timer';
-import SettingsIcon from '@mui/icons-material/Settings';
-import PhonelinkSetupIcon from '@mui/icons-material/PhonelinkSetup';
+import AnalyticsIcon from '@mui/icons-material/Analytics';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Accordion, AccordionDetails, AccordionSummary, Typography } from '@mui/material';
 
 const categories = [
   {
-    id: 'Build',
+    id: 'Model',
     children: [
       {
-        id: 'Authentication',
-        icon: <PeopleIcon />,
+        id: 'General',
+        icon: <DashboardIcon />,
         active: true,
       },
-      { id: 'Database', icon: <DnsRoundedIcon /> },
-      { id: 'Storage', icon: <PermMediaOutlinedIcon /> },
-      { id: 'Hosting', icon: <PublicIcon /> },
-      { id: 'Functions', icon: <SettingsEthernetIcon /> },
+      { id: 'Schedule', icon: <EventIcon /> },
+      { id: 'Development', icon: <ConstructionIcon /> },
+      { id: 'Land', icon: <TerrainIcon /> },
+      { id: 'Rental', icon: <HomeWorkIcon /> },
+      { id: 'Sale', icon: <SellIcon /> },
+      { id: 'Financing', icon: <AccountBalanceIcon /> },
       {
-        id: 'Machine learning',
-        icon: <SettingsInputComponentIcon />,
-      },
-    ],
+        id: 'Cashflow',
+        icon: <SwapHorizIcon />,
+      }
+    ]
   },
   {
-    id: 'Quality',
+    id: 'Report',
     children: [
-      { id: 'Analytics', icon: <SettingsIcon /> },
-      { id: 'Performance', icon: <TimerIcon /> },
-      { id: 'Test Lab', icon: <PhonelinkSetupIcon /> },
+      { id: 'Analytics', icon: <AnalyticsIcon /> },
+      { id: 'Reports', icon: <TimerIcon /> }
     ],
   },
 ];
@@ -72,26 +76,43 @@ export default function Navigator(props) {
         </ListItem>
         <ListItem sx={{ ...item, ...itemCategory }}>
           <ListItemIcon>
-            <HomeIcon />
+            <AllOutIcon />
           </ListItemIcon>
-          <ListItemText>Project Overview</ListItemText>
+          <ListItemText>Scenarios</ListItemText>
         </ListItem>
-        {categories.map(({ id, children }) => (
-          <Box key={id} sx={{ bgcolor: '#101F33' }}>
-            <ListItem sx={{ py: 2, px: 3 }}>
-              <ListItemText sx={{ color: '#fff' }}>{id}</ListItemText>
-            </ListItem>
-            {children.map(({ id: childId, icon, active }) => (
-              <ListItem disablePadding key={childId}>
-                <ListItemButton selected={active} sx={item}>
-                  <ListItemIcon>{icon}</ListItemIcon>
-                  <ListItemText>{childId}</ListItemText>
-                </ListItemButton>
-              </ListItem>
-            ))}
+        <ListItem>
+          <Accordion sx={{background: 'grey'}} disablePadding>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1-content"
+              id="panel1-header"
+            >
+              <Typography component="span">Scenario 1</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <List disablePadding>
+                {categories.map(({ id, children }) => (
+                  <Box key={id} sx={{ bgcolor: '#101F33' }}>
+                    <ListItem sx={{ py: 2, px: 3 }}>
+                      <ListItemText sx={{ color: '#fff' }}>{id}</ListItemText>
+                    </ListItem>
+
+                    {children.map(({ id: childId, icon, active }) => (
+                      <ListItem disablePadding key={childId}>
+                        <ListItemButton selected={active} sx={item}>
+                          <ListItemIcon>{icon}</ListItemIcon>
+                          <ListItemText>{childId}</ListItemText>
+                        </ListItemButton>
+                      </ListItem>
+                    ))}
+                  </Box>
+                ))}
+              </List>
+            </AccordionDetails>
+        </Accordion>
             <Divider sx={{ mt: 2 }} />
-          </Box>
-        ))}
+      </ListItem>
+
       </List>
     </Drawer>
   );

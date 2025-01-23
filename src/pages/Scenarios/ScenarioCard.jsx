@@ -3,6 +3,7 @@ import CardContent from '@mui/material/CardContent';
 import CardActions from '@mui/material/CardActions';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import { Link } from 'react-router-dom';
 
 export default function Project({ id }) {
   return (
@@ -12,7 +13,9 @@ export default function Project({ id }) {
           <Typography variant='h3'>Scenario #{id}</Typography>
         </CardContent>
         <CardActions>
-          <Button variant='outlined'>View Details</Button>
+          <Link to={`/scenario/${id}`}>
+            <Button> View Details</Button>
+          </Link>
         </CardActions>
       </Card>
     </>

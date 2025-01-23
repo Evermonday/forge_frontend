@@ -1,46 +1,27 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
+import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
 import './App.css';
 import Register from './pages/Auth/Register';
-import Dashboard from './pages/Dashboard';
 import Login from './pages/Auth/Login';
-import { Box, Grid2 } from '@mui/material';
-import AppNavbar from './components/AppNavbar';
+import { Box } from '@mui/material';
 import AuthRoutes from './routes/AuthRoutes';
 import GuestRoutes from './routes/GuestRoutes';
 
-import { useState } from 'react';
-import ListSubheader from '@mui/material/ListSubheader';
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
-import Collapse from '@mui/material/Collapse';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import DraftsIcon from '@mui/icons-material/Drafts';
-import SendIcon from '@mui/icons-material/Send';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
-import StarBorder from '@mui/icons-material/StarBorder';
-
+import { lazy, Suspense, useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
 import Navigator from './components/Navigator';
 import Header from './components/Header';
-
-
+import Scenarios from './pages/Scenarios/Scenarios';
+import ShowScenario from './pages/Scenario/ShowScenario';
+import Settings from './pages/Settings';
+import ScenarioFromScratch from './pages/Scenario/ScenarioFromScratch';
 
 function Copyright() {
   return (
     <Typography variant="body2" align="center" sx={{ color: 'text.secondary' }}>
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}.
+      Copyright © Forge 2025
     </Typography>
   );
 }
@@ -190,8 +171,6 @@ theme = {
 
 const drawerWidth = 256;
 
-
-
 export default function App() {
   const [open, setOpen] = useState(true);
 
@@ -206,53 +185,61 @@ export default function App() {
     setOpen(!open);
   };
 
+  // const LoginComponent = lazy(() => import("../pages/login"));
+  // const Project = lazy(() => import("../pages/home"));
+  // const RouteNotFoundComponent = lazy(() => import("../pages/pageNotFound"));
+
+
   return (
     <ThemeProvider theme={theme}>
-    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
-      <CssBaseline />
-      <Box
-        component="nav"
-        sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
-      >
-        {isSmUp ? null : (
-          <Navigator
-            PaperProps={{ style: { width: drawerWidth } }}
-            variant="temporary"
-            open={mobileOpen}
-            onClose={handleDrawerToggle}
-          />
-        )}
-        <Navigator
-          PaperProps={{ style: { width: drawerWidth } }}
-          sx={{ display: { sm: 'block', xs: 'none' } }}
-        />
-      </Box>
-      <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-        <Header onDrawerToggle={handleDrawerToggle} />
-        <Box component="main" sx={{ flex: 1, py: 6, px: 4, bgcolor: '#eaeff1' }}>
-        <BrowserRouter>
-          <Routes>
-            <Route element={<AuthRoutes />}>
-              <Route path="/" element={<Dashboard />} />
-            </Route>
+      <BrowserRouter>
+        <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+          <CssBaseline />
+          <Box
+            component="nav"
+            sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+          >
+            {isSmUp ? null : (
+              <Navigator
+                PaperProps={{ style: { width: drawerWidth } }}
+                variant="temporary"
+                open={mobileOpen}
+                onClose={handleDrawerToggle}
+              />
+            )}
+            <Navigator
+              PaperProps={{ style: { width: drawerWidth } }}
+              sx={{ display: { sm: 'block', xs: 'none' } }}
+            />
+          </Box>
+          <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <Header onDrawerToggle={handleDrawerToggle} />
+            <Box component="main" sx={{ flex: 1, py: 6, px: 4, bgcolor: '#eaeff1' }}>
+              {/* <Suspense fallback={<div>Loading...</div>}> */}
+                  <Routes>
+                    <Route path="/" >
+                      <Route element={<AuthRoutes />} >
+                        <Route index element={<Scenarios />} />
+                        <Route path="scenario" element={<Scenarios />} />
+                        <Route path="scenario/new" element={<ScenarioFromScratch />} />
+                        <Route path="scenario/:scenarioId" element={<ShowScenario />} />
+                        <Route path="settings" element={<Settings />} />
+                      </Route>
 
-            <Route element={<GuestRoutes />}>
-              <Route path="login" element={<Login />} />
-              <Route path="register" element={<Register />} />
-            </Route>
-          </Routes>
-        </BrowserRouter>
+                      <Route element={<GuestRoutes />}>
+                        <Route path="login" element={<Login />} />
+                        <Route path="register" element={<Register />} />
+                      </Route>
+                    </Route>
+
+                  </Routes>
+              {/* </Suspense> */}
+            </Box>
+            <Box component="footer" sx={{ p: 2, bgcolor: '#eaeff1' }}>
+              <Copyright />
+            </Box>
+          </Box>
         </Box>
-        <Box component="footer" sx={{ p: 2, bgcolor: '#eaeff1' }}>
-          <Copyright />
-        </Box>
-      </Box>
-    </Box>
-  </ThemeProvider>
-
-
-
-        // <AppNavbar />
-
-
+      </BrowserRouter>
+    </ThemeProvider>
   )}
