@@ -220,10 +220,13 @@ export default function App() {
                     <Route path="/" >
                       <Route element={<AuthRoutes />} >
                         <Route index element={<Scenarios />} />
+                        <Route path="settings" element={<Settings />} />
                         <Route path="scenario" element={<Scenarios />} />
                         <Route path="scenario/new" element={<ScenarioFromScratch />} />
-                        <Route path="scenario/:scenarioId" element={<ShowScenario />} />
-                        <Route path="settings" element={<Settings />} />
+                        <Route path="scenario/:scenarioId" >
+                          <Route element={<ShowScenario />} index />
+                          <Route path="overview" element={<ShowScenario />} />
+                        </Route>
                       </Route>
 
                       <Route element={<GuestRoutes />}>
