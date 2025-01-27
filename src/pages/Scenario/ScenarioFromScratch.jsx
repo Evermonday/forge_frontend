@@ -12,7 +12,9 @@ import {
   UNIT_TYPES
 } from "../../constants/OverviewTab";
 import Decimal from "decimal.js";
+import { useNavigate } from "react-router-dom";
 
+// TODO: Move out for fast reload
 export const scenarioInitialState = {
   measurementUnit: MEASUREMENT_UNITS[0],
   name: 'Scenario',
@@ -39,6 +41,7 @@ export const scenarioInitialState = {
 
 export default function ScenarioFromScratch(){
   const [statusTags, setStatusTags] = useState([{'name': '', 'id': 0}])
+  const navigate = useNavigate();
 
   useEffect( () => {
     async function fetchTags() {
@@ -60,6 +63,7 @@ export default function ScenarioFromScratch(){
     state.tag_id = state.statusTag.id
     delete state.statusTag
     const response = await createScenarioApi(state)
+    navigate('/scenario');
   }
   
   return (
