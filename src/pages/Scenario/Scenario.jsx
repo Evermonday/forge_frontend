@@ -4,7 +4,7 @@ import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 import { useState } from 'react';
 import { Container } from '@mui/material';
-import { GeneralTab } from './Tabs/GeneralTab';
+import { OverviewTab } from './Tabs/OverviewTab';
 import { ScheduleTab } from './Tabs/ScheduleTab';
 import { ScenarioProvider } from '../../contexts/ScenarioContext';
 import { styled } from '@mui/material/styles';
@@ -196,7 +196,7 @@ export default function Scenario({project}) {
   return (
     <>
       <ScenarioProvider>
-        <GeneralTab unit={unit} />
+        <OverviewTab unit={unit} />
       </ScenarioProvider>
     </>
   );

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { GeneralTab } from "./Tabs/GeneralTab";
+import { OverviewTab } from "./Tabs/OverviewTab";
 import { createScenarioApi, getTagApi } from "../../configs/api";
 import {
   AREA_ALLOC_METHODS,
@@ -10,7 +10,7 @@ import {
   MEASUREMENT_UNITS,
   NFA_AREA_ALLOC_METHODS,
   UNIT_TYPES
-} from "../../constants/GeneralTab";
+} from "../../constants/OverviewTab";
 import Decimal from "decimal.js";
 
 export const scenarioInitialState = {
@@ -63,7 +63,7 @@ export default function ScenarioFromScratch(){
   }
   
   return (
-    <GeneralTab
+    <OverviewTab
       initialState={{...scenarioInitialState, statusTag, statusTags}}
       handleScenarioSave={handleScenarioSave}
     />

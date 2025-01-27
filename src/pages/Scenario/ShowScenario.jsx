@@ -1,5 +1,5 @@
-import { Suspense, useEffect, useState } from "react";
-import { GeneralTab } from "./Tabs/GeneralTab";
+import { useEffect, useState } from "react";
+import { OverviewTab } from "./Tabs/OverviewTab";
 import { getScenarioApi, getTagApi, updateScenarioApi } from "../../configs/api";
 import { useParams } from "react-router-dom";
 import { scenarioInitialState } from "./ScenarioFromScratch";
@@ -35,21 +35,6 @@ export default function ShowScenario()
     fetchData();
   }, [scenarioId])
 
-//   useEffect(() => {
-//     async function fetchScenario() {
-
-// console.log('dooor')
-// const newState = {...fetchedState, statusTag: fetchedData.tag, ...fetchedData}
-// console.log(fetchedData.tag)
-// console.log(newState)
-
-//       setFetchedState(prevState => ({...prevState, statusTag: fetchedData.tag, ...fetchedData}))
-//     }
-
-//     fetchScenario();
-//   }, [scenarioId])
-
-
   async function handleScenarioSave(state)
   {
     delete state.measurementUnit;
@@ -59,10 +44,10 @@ export default function ShowScenario()
     const response = await updateScenarioApi(state, scenarioId)
   }
 
-    return (
-        <GeneralTab
-          initialState={fetchedState}
-          handleScenarioSave={handleScenarioSave}
-      />
-    )
+  return (
+    <OverviewTab
+      initialState={fetchedState}
+      handleScenarioSave={handleScenarioSave}
+    />
+  )
 }

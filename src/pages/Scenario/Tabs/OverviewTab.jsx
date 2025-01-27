@@ -12,7 +12,7 @@ import {
   GFA_CALC_METHODS,
   NFA_AREA_ALLOC_METHODS,
   UNIT_TYPES
-} from '../../../constants/GeneralTab'
+} from '../../../constants/OverviewTab'
 import { useEffect, useState } from 'react';
 import { KeyboardArrowDown } from '@mui/icons-material';
 
@@ -38,7 +38,7 @@ const UnitInputAdornment = styled(InputAdornment)({
   },
 });
 
-export function GeneralTab( {initialState, handleScenarioSave} ) {
+export function OverviewTab( {initialState, handleScenarioSave} ) {
   const [state, setState] = useState(initialState) 
   
   useEffect(() => {
