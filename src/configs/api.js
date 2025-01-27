@@ -46,7 +46,7 @@ export const getScenariosApi = () => apiClient.get(`scenario`);
 export const getScenarioApi = scenarioId => apiClient.get(`scenario/${scenarioId}`);
 export const createScenarioApi = scenarioCreationData =>
   apiClient.post(
-    `api/scenario`,
+    `scenario`,
     scenarioCreationData
   );
 export const updateScenarioApi = (scenarioUpdateData, scenarioId) =>
