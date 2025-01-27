@@ -50,6 +50,6 @@ export const createScenarioApi = scenarioCreationData =>
     scenarioCreationData
   );
 export const updateScenarioApi = (scenarioUpdateData, scenarioId) =>
-  apiClient.put(`api/scenario/${scenarioId}`, scenarioUpdateData);
+  apiClient.put(`scenario/${scenarioId}`, scenarioUpdateData);
 
 export const createTaskApi = scenarioId => apiClient.post('scenario')
