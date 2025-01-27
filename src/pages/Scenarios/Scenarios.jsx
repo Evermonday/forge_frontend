@@ -93,7 +93,7 @@ export default function Scenarios() {
             <ListItem key={scenario.id} value={scenario.id}>
               <Box>
                 {scenario.name}
-                <Button onClick={() => navigate(`scenario/${scenario.id}`)}>View</Button>
+                <Button onClick={() => navigate(`/scenario/${scenario.id}/overview`)}>View</Button>
               </Box>
             </ListItem>
           )}
