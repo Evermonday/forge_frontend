@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Outlet } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Register from './pages/Auth/Register';
 import Login from './pages/Auth/Login';
@@ -6,7 +6,7 @@ import { Box } from '@mui/material';
 import AuthRoutes from './routes/AuthRoutes';
 import GuestRoutes from './routes/GuestRoutes';
 
-import { lazy, Suspense, useState } from 'react';
+import { useState } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -16,7 +16,7 @@ import Header from './components/Header';
 import Scenarios from './pages/Scenarios/Scenarios';
 import ShowScenario from './pages/Scenario/ShowScenario';
 import Settings from './pages/Settings';
-import ScenarioFromScratch from './pages/Scenario/ScenarioFromScratch';
+// import ScenarioFromScratch from './pages/Scenario/ScenarioFromScratch';
 
 function Copyright() {
   return (
@@ -222,7 +222,7 @@ export default function App() {
                         <Route index element={<Scenarios />} />
                         <Route path="settings" element={<Settings />} />
                         <Route path="scenario" element={<Scenarios />} />
-                        <Route path="scenario/new" element={<ScenarioFromScratch />} />
+                        {/* <Route path="scenario/new" element={<ScenarioFromScratch />} /> */}
                         <Route path="scenario/:scenarioId" >
                           <Route element={<ShowScenario />} index />
                           <Route path="overview" element={<ShowScenario />} />

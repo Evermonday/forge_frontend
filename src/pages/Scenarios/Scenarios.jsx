@@ -11,7 +11,7 @@ import {
   FormControlLabel,
   Radio,
 } from '@mui/material';
-import { getScenariosApi } from '../../configs/api';
+import { createScenarioFromScratchApi, getScenariosApi } from '../../configs/api';
 
 function ParentComponent({ unit, setUnit }) {
   console.log('here')
@@ -83,11 +83,18 @@ export default function Scenarios() {
 
     fetchScenarios()
   }, [])
-  const hasChildren = true;
+  
+  async function handleScenarioCreation()
+  {
+    const response = await createScenarioFromScratchApi();
+    const scenarioId = response.data.id;
+    console.log(response.data)
+    navigate(`/scenario/${scenarioId}`);
+  }
 
   return (
     <Box>
-      <Button onClick={() => navigate('scenario/new')}>From Scratch</Button>
+      <Button onClick={handleScenarioCreation}>From Scratch</Button>
       <List>
           {scenarios.map(scenario =>
             <ListItem key={scenario.id} value={scenario.id}>
