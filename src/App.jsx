@@ -13,10 +13,11 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
 import Navigator from './components/Navigator';
 import Header from './components/Header';
-import Scenarios from './pages/Scenarios/Scenarios';
+import ProjectHome from './pages/Project/ProjectHome';
 import ShowScenario from './pages/Scenario/ShowScenario';
 import Settings from './pages/Settings';
 // import ScenarioFromScratch from './pages/Scenario/ScenarioFromScratch';
+import { ScheduleTab } from './pages/Scenario/Tabs/ScheduleTab';
 
 function Copyright() {
   return (
@@ -219,9 +220,9 @@ export default function App() {
                   <Routes>
                     <Route path="/" >
                       <Route element={<AuthRoutes />} >
-                        <Route index element={<Scenarios />} />
+                        <Route index element={<ProjectHome />} />
                         <Route path="settings" element={<Settings />} />
-                        <Route path="scenario" element={<Scenarios />} />
+                        <Route path="scenario" element={<ProjectHome />} />
                         {/* <Route path="scenario/new" element={<ScenarioFromScratch />} /> */}
                         <Route path="scenario/:scenarioId" >
                           <Route element={<ShowScenario />} index />

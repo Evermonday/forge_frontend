@@ -68,7 +68,7 @@ function NoChildComponent({ unit }) {
   );
 }
 
-export default function Scenarios() {
+export default function ProjectHome() {
   const [unit, setUnit] = useState('metric'); // metric, imperial
   const [scenarios, setScenarios] = useState([]); // metric, imperial
   const navigate = useNavigate();
