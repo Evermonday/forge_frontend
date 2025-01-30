@@ -14,7 +14,30 @@ import {
   UNIT_TYPES
 } from '../../../constants/OverviewTab'
 import { useEffect, useState } from 'react';
+console.log('STATE___: X');
 import { KeyboardArrowDown } from '@mui/icons-material';
+import {
+  updateScenarioAreaAllocMethodApi,
+  updateScenarioCommercialGFANumberApi,
+  updateScenarioCommercialGFAPercentageApi,
+  updateScenarioCommercialNFANumberApi,
+  updateScenarioCommercialNFAPercentageApi,
+  updateScenarioDevelopmentStrategy,
+  updateScenarioDevelopmentType,
+  updateScenarioEndUse,
+  updateScenarioFSIApi,
+  updateScenarioGFAApi,
+  updateScenarioGFACalcMethodApi,
+  updateScenarioName,
+  updateScenarioNFAAreaAllocMethodApi,
+  updateScenarioNote,
+  updateScenarioResidentialGFANumberApi,
+  updateScenarioResidentialGFAPercentageApi,
+  updateScenarioResidentialNFANumberApi,
+  updateScenarioResidentialNFAPercentageApi,
+  updateScenarioTag,
+  updateScenarioUnitType
+} from '../../../configs/api';
 
 
 // #TODO: toDecimalPlaces(2)
@@ -39,14 +62,41 @@ const UnitInputAdornment = styled(InputAdornment)({
 });
 
 export function OverviewTab( {initialState, handleScenarioSave} ) {
-  const [state, setState] = useState(initialState) 
+  const [state, setState] = useState(initialState);
+  const [errorState, setErrorState] = useState({
+    measurementUnit: null,
+    name: null,
+    note: null,
+    developmentType: null,
+    developmentStrategy: null,
+    unitType: null,
+    endUse: null,
+    landArea: null,
+    fsi: null,
+    gfa: null,
+    gfaCalcMethod: null,
+    areaAllocMethod: null,
+    residentialGFANumber: null,
+    residentialGFAPercentage: null,
+    commercialGFANumber: null,
+    commercialGFAPercentage: null,
+    nfaAreaAllocMethod: null,
+    residentialNFANumber: null,
+    residentialNFAPercentage: null,
+    commercialNFANumber: null,
+    commercialNFAPercentage:  null
+  });
   
-  useEffect(() => {
+  useEffect(() =>
+  {
+console.log('STATE___: 1');
     setState(initialState)
   }, [initialState])
 
   // land_area Event Listener
-  useEffect(() => {
+  useEffect(() =>
+  {
+console.log('STATE___: 2');
     if (state.gfaCalcMethod == 'Manual'){
       const gfa = Number(state.gfa);
       const fsi = Decimal(gfa).dividedBy(state.landArea)
@@ -54,68 +104,35 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
     }
   }, [state.gfaCalcMethod, state.gfa])
 
-  // land_area Event Listener
-  //#TODO: Why can't this listener change the state when residential_gfa_percentage listener is running?
-  // useEffect(() => {
-  //   if (state.gfaCalcMethod == 'Manual'){
-  //     const gfa = Number(state.gfa);
-  //     console.log('___state: 2');
-  //     console.log(gfa)
-  //     setState({...state, fsi: 2, landArea: gfa})
-  //   }
-  // }, [state.gfa])
-
-  // fsi Event Listener
-  // useEffect(() => {
-  //   if (state.gfaCalcMethod == 'Manual'){
-  //     const gfa = Number(state.gfa);   
-  //     const landArea = Number(state.landArea)   
-  //     const fsi = new Decimal(gfa).dividedBy(landArea);
-  //     console.log('___state: X');
-  // setState({...state, fsi})
-  //   }
-  // }, [state.gfa])
-
   // gfa Event Listener
-  useEffect(() => {
+  useEffect(() =>
+  {
+console.log('STATE___: 3');
     if (state.gfaCalcMethod == 'FSI-Based'){
       const landArea = Number(state.landArea);
       const fsi = Number(state.fsi);
       const gfa = new Decimal(landArea).times(fsi);
-      console.log('___state: 3');
       setState(prevState => ({...prevState, gfa}))
     }
-  }, [state.fsi, state.landArea, state.gfaCalcMethod])
-
-  // residential_gfa_number
-  useEffect(() => {
-    if(state.areaAllocMethod != 'Manual' &&
-      (state.endUse == 'Mixed Use' || state.endUse == 'Residential'))
-    {
-      const gfa = Number(state.gfa);
-      const residentialGFAPercentage = Number(state.residentialGFAPercentage) / 100;
-      const residentialGFANumber =  new Decimal(gfa).times(residentialGFAPercentage);
-      console.log('___state: 4');
-      setState(prevState => ({...prevState, residentialGFANumber}))
-
-    }
-  }, [state.residentialGFAPercentage, state.gfa])
-
+  }, [state.fsi, state.gfaCalcMethod])
 
   // residential_gfa_percentage
   // residential_gfa_number
-  useEffect(() => {
+  useEffect(() =>
+  {
+console.log('STATE___: 5');
     if (!(state.endUse == 'Mixed Use' || state.endUse == 'Residential'))
     {
+console.log(`5__ ${state.commercialGFANumber}`)
+
       const commercialGFANumber = Number(state.commercialGFANumber) + Number(state.residentialGFANumber)
-      console.log('___state: 5');
       // setState({...state, residentialGFANumber: 0, residentialGFAPercentage: 0, commercialGFANumber, commercialGFAPercentage: 100})
-      const commercialGFAPercentage = (commercialGFANumber / Number(state.gfa)) * 100
-      
+console.log(`5__ ${commercialGFANumber}`)
+      const commercialGFAPercentage = state.gfa == 0 ? 0 : (commercialGFANumber / Number(state.gfa)) * 100
+console.log(`5__ ${commercialGFAPercentage}`)
       const commercialNFANumber = Number(state.commercialNFANumber) + Number(state.residentialNFANumber)
-      console.log('___state: 5');
       // setState({...state, residentialNFANumber: 0, residentialNFAPercentage: 0, commercialNFANumber, commercialNFAPercentage: 100})
-      const commercialNFAPercentage = (Number(state.commercialNFANumber) / commercialGFANumber) * 100
+      const commercialNFAPercentage = commercialGFANumber == 0 ? 0 : (Number(state.commercialNFANumber) / commercialGFANumber) * 100
 
       setState(prevState => ({
         ...prevState,
@@ -133,14 +150,12 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
     if (!(state.endUse == 'Mixed Use' || state.endUse == 'Commercial'))
     {
       const residentialGFANumber = Number(state.commercialGFANumber) + Number(state.residentialGFANumber)
-      console.log('___state: 15');
       // setState({...state, commercialGFANumber: 0, commercialGFAPercentage: 0, residentialGFANumber, residentialGFAPercentage: 100})
-      const residentialGFAPercentage = (residentialGFANumber / Number(state.gfa)) * 100
+      const residentialGFAPercentage = state.gfa == 0 ? 0 : (residentialGFANumber / Number(state.gfa)) * 100
 
       const residentialNFANumber = Number(state.commercialNFANumber) + Number(state.residentialNFANumber)
-      console.log('___state: 15');
       // setState({...state, commercialNFANumber: 0, commercialNFAPercentage: 0, residentialNFANumber, residentialNFAPercentage: 100})
-      const residentialNFAPercentage = (state.residentialNFANumber == 0 || residentialGFANumber == 0) ? 0 : (Number(state.residentialNFANumber) / residentialGFANumber) * 100
+      const residentialNFAPercentage = residentialGFANumber == 0 ? 0 : (Number(state.residentialNFANumber) / residentialGFANumber) * 100
 
       setState(prevState => ({
         ...prevState,
@@ -156,17 +171,30 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
     }
   }, [state.endUse])
 
+    // residential_gfa_number
+    useEffect(() =>
+      {
+console.log('STATE___: 4');
+        if(state.areaAllocMethod != 'Manual' &&
+          (state.endUse == 'Mixed Use' || state.endUse == 'Residential'))
+        {
+          const gfa = Number(state.gfa);
+          const residentialGFAPercentage = Number(state.residentialGFAPercentage) / 100;
+          const residentialGFANumber =  new Decimal(gfa).times(residentialGFAPercentage);
+          setState(prevState => ({...prevState, residentialGFANumber}))
+    
+        }
+    }, [state.residentialGFAPercentage, state.gfa])
+
   // residential_gfa_percentage
   useEffect(() => {
+console.log('STATE___: 6');
     if(state.areaAllocMethod != 'Percentile' &&
       (state.endUse == 'Mixed Use' || state.endUse == 'Residential'))
     {
       const gfa = Number(state.gfa);
       const residentialGFANumber = Number(state.residentialGFANumber);
-      const residentialGFAPercentage =  new Decimal(residentialGFANumber).dividedBy(gfa) * 100 || 0;
-      console.log(gfa)
-      console.log(state.landArea)
-      console.log('___state: 6');
+      const residentialGFAPercentage =  gfa == 0 ? 0 : new Decimal(residentialGFANumber).dividedBy(gfa) * 100;
       setState(prevState => ({...prevState, residentialGFAPercentage}))
 
     }
@@ -174,42 +202,66 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
 
 
   // commercial_gfa_number
-  useEffect(() => {
+  useEffect(() =>
+  {
+console.log('STATE___: 7');
     if(state.areaAllocMethod != 'Manual' &&
       (state.endUse == 'Mixed Use' || state.endUse == 'Commercial'))
     {
       const gfa = Number(state.gfa);
       const commercialGFAPercentage = Number(state.commercialGFAPercentage) / 100;
+console.log(`7__ ${state.commercialGFAPercentage}`);
+console.log(`7__ ${commercialGFAPercentage}`);
       const commercialGFANumber =  new Decimal(gfa).times(commercialGFAPercentage);
-      console.log('___state: 7');
       setState(prevState => ({...prevState, commercialGFANumber}))
 
     }
   }, [state.commercialGFAPercentage, state.gfa])
 
+
+  // commercial_gfa_percentage
   // commercial_gfa_percentage
   useEffect(() => {
+console.log('STATE___: 12');
     if(state.areaAllocMethod != 'Percentile' &&
       (state.endUse == 'Mixed Use' || state.endUse == 'Commercial'))
     {
+console.log("___-")
       const gfa = Number(state.gfa);
       const commercialGFANumber = Number(state.commercialGFANumber);
-      const commercialGFAPercentage =  new Decimal(commercialGFANumber).dividedBy(gfa) * 100;
-      console.log('___state: 8');
+      const commercialGFAPercentage =  gfa == 0 ? 0 : new Decimal(commercialGFANumber).dividedBy(gfa) * 100;
       setState(prevState => ({...prevState, commercialGFAPercentage}))
 
     }
   }, [state.commercialGFANumber, state.gfa])
 
+        
+
+  // commercial_gfa_percentage
+//   useEffect(() =>
+//   {
+// console.log('STATE___: 8');
+//     if(state.areaAllocMethod != 'Percentile' &&
+//       (state.endUse == 'Mixed Use' || state.endUse == 'Commercial'))
+//     {
+//       const gfa = Number(state.gfa);
+//       const commercialGFANumber = Number(state.commercialGFANumber);
+//       const commercialGFAPercentage = gfa == 0 ? 0 : new Decimal(commercialGFANumber).dividedBy(gfa) * 100;
+// console.log(commercialGFAPercentage)
+//       setState(prevState => ({...prevState, commercialGFAPercentage}))
+
+//     }
+//   }, [state.commercialGFANumber, state.gfa])
+
   useEffect(() =>
-  {
+    {
+console.log('STATE___: 10');
     if(state.nfaAreaAllocMethod != 'Percentile' &&
       (state.endUse == 'Mixed Use' || state.endUse == 'Residential'))
     {
       const residentialGFANumber = Number(state.residentialGFANumber);
       const residentialNFANumber = Number(state.residentialNFANumber);
       const residentialNFAPercentage =  residentialGFANumber == 0 ? 0 :new Decimal(residentialNFANumber).dividedBy(residentialGFANumber) * 100;
-      console.log('___state: 6');
       setState(prevState => ({...prevState, residentialNFAPercentage}))
 
     }
@@ -217,26 +269,26 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
   
   useEffect(() =>
     {
+console.log('STATE___: 11');
       if(state.nfaAreaAllocMethod != 'Manual' &&
         (state.endUse == 'Mixed Use' || state.endUse == 'Residential'))
       {
         const residentialGFANumber = Number(state.residentialGFANumber);
         const residentialNFANumber =  new Decimal(residentialGFANumber).times(state.residentialNFAPercentage / 100);
-        console.log('___state: 6');
         setState(prevState => ({...prevState, residentialNFANumber}))
   
       }
     }, [state.residentialNFAPercentage])
 
   useEffect(() =>
-  {
+    {
+console.log('STATE___: 12');
     if(state.nfaAreaAllocMethod != 'Percentile' &&
       (state.endUse == 'Mixed Use' || state.endUse == 'Commercial'))
     {
       const commercialGFANumber = Number(state.commercialGFANumber);
       const commercialNFANumber = Number(state.commercialNFANumber);
       const commercialNFAPercentage =  new Decimal(commercialNFANumber).dividedBy(commercialGFANumber) * 100;
-      console.log('___state: 6');
       setState(prevState => ({...prevState, commercialNFAPercentage}))
 
     }
@@ -244,16 +296,103 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
 
   useEffect(() =>
     {
+console.log('STATE___: 13');
       if(state.nfaAreaAllocMethod != 'Manual' &&
         (state.endUse == 'Mixed Use' || state.endUse == 'Commercial'))
       {
         const commercialGFANumber = Number(state.commercialGFANumber);
         const commercialNFANumber =  new Decimal(commercialGFANumber).times(state.commercialNFAPercentage / 100);
-        console.log('___state: 6');
         setState(prevState => ({...prevState, commercialNFANumber}))
   
       }
     }, [state.commercialNFAPercentage])
+
+
+
+  // Handling Functions
+
+  function handleScenarioNameChange(newName)
+  {
+    updateScenarioName({name: newName}, state.id);
+    setState({...state, name: newName});
+  }
+
+  function handleScenarioNoteChange(note)
+  {
+    updateScenarioNote({note}, state.id);
+    setState({...state, note});
+  }
+
+  function handleScenarioTagChange(tagId)
+  {
+    const statusTag = state.statusTags.find(tag => tag.id == tagId)
+    updateScenarioTag({tagId}, state.id);
+    setState({...state, statusTag});
+  }
+
+  function handleScenarioDevelopmentTypeChange(developmentType)
+  {
+    updateScenarioDevelopmentType({developmentType}, state.id);
+    setState({...state, developmentType});
+  }
+
+  function handleScenarioDevelopmentStrategyChange(developmentStrategy)
+  {
+    updateScenarioDevelopmentStrategy({developmentStrategy}, state.id);
+    setState({...state, developmentStrategy});
+  }
+
+  function handleScenarioUnitTypeChange(unitType)
+  {
+    updateScenarioUnitType({unitType}, state.id);
+    setState({...state, unitType});
+  }
+
+  function handleScenarioEndUseChange(endUse)
+  {
+    updateScenarioEndUse({endUse}, state.id);
+    setState({...state, endUse});
+  }
+
+  function handleGFACalcMethodChange(gfaCalcMethod)
+  {
+    updateScenarioGFACalcMethodApi({gfaCalcMethod}, state.id);
+    setState({...state, gfaCalcMethod});
+  }
+
+  function handleFSIChange(fsi)
+  {
+    if(Decimal(fsi).decimalPlaces() > 2)
+      return;
+
+    setState({...state, fsi});
+    
+    /// Cast to two Decimal Places
+    fsi = (Math.round(fsi * 100) / 100).toFixed(2);
+    updateScenarioFSIApi({fsi}, state.id);
+  }
+
+  function handleGFAChange(gfa)
+  {
+    // gfa = Number(gfa)
+    // if(isNaN(gfa))
+    // {
+    //   return;
+    // }
+    if(Number(gfa) > 10000000)
+    {
+      return;
+    }
+
+    setState({...state, gfa});
+    updateScenarioGFAApi({gfa}, state.id);
+  }
+
+  function handleAreaAllocMethodChange(areaAllocMethod)
+  {
+    setState({...state, areaAllocMethod});
+    updateScenarioAreaAllocMethodApi({areaAllocMethod}, state.id);
+  }
 
   function handleResidentialGFANumberChange(residentialGFANumber)
   {
@@ -263,14 +402,18 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
     const totalGFA = Number(residentialGFANumber) + Number(state.commercialGFANumber)
     if (totalGFA > state.gfa)
     {
-      console.log('___state: 9');
-      const maxAvailable = state.gfa - state.commercialGFANumber
-      setState({...state, residentialGFANumber: maxAvailable})
+      setErrorState({...errorState, residentialGFANumber: 'Cannot exceed GFA'});
+      // const maxAvailable = state.gfa - state.commercialGFANumber
+      // setState({...state, residentialGFANumber: maxAvailable})
       return;
     }
+    else
+    {
+      setErrorState({...errorState, residentialGFANumber: null});
+      setState({...state, residentialGFANumber});
+      updateScenarioResidentialGFANumberApi({residentialGFANumber}, state.id);
+    }
 
-    console.log('___state: 10');
-    setState({...state, residentialGFANumber})
   }
 
   function handleResidentialGFAPercentageChange(residentialGFAPercentage)
@@ -278,17 +421,21 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
     // if (residentialGFAPercentage)
     // regex
       // return
-    const totalGFA = Number(residentialGFAPercentage) + Number(state.commercialGFAPercentage)
-    if (totalGFA > 100)
+    const totalGFAPercentage = Number(residentialGFAPercentage) + Number(state.commercialGFAPercentage)
+    if (totalGFAPercentage > 100)
     {
-      console.log('___state: 40');
-      const maxAvailable = 100 - state.commercialGFAPercentage
-      setState({...state, residentialGFAPercentage: maxAvailable})
+      // const maxAvailable = 100 - state.commercialGFAPercentage
+      // setState({...state, residentialGFAPercentage: maxAvailable})
+      setErrorState({...errorState, residentialGFAPercentage: 'Total Percentage Must Not Exceed 100%'});
       return;
     }
+    else
+    {
+      setErrorState({...errorState, residentialGFAPercentage: null});
+      setState({...state, residentialGFAPercentage});
+      updateScenarioResidentialGFAPercentageApi({residentialGFAPercentage}, state.id);
+    }
 
-    console.log('___state: 10');
-    setState({...state, residentialGFAPercentage})
   }
 
   function handleCommercialGFANumberChange(commercialGFANumber)
@@ -299,14 +446,18 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
     const totalGFA = Number(commercialGFANumber) + Number(state.residentialGFANumber)
     if (totalGFA > state.gfa)
     {
-      console.log('___state: 44');
-      const maxAvailable = state.gfa - state.commercialGFANumber
-      setState({...state, commercialGFANumber: maxAvailable})
+      setErrorState({...errorState, commercialGFANumber: 'Cannot exceed GFA'});
+      // const maxAvailable = state.gfa - state.commercialGFANumber
+      // setState({...state, commercialGFANumber: maxAvailable})
       return;
     }
+    else
+    {
+      setErrorState({...errorState, commercialGFANumber: null});
+      setState({...state, commercialGFANumber});
+      updateScenarioCommercialGFANumberApi({commercialGFANumber}, state.id);
+    }
 
-    console.log('___state: 10');
-    setState({...state, commercialGFANumber})
   }
 
   function handleCommercialGFAPercentageChange(commercialGFAPercentage)
@@ -314,17 +465,27 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
     // if (commercialGFAPercentage)
     // regex
       // return
-    const totalGFA = Number(commercialGFAPercentage) + Number(state.residentialGFAPercentage)
-    if (totalGFA > 100)
+    const totalGFAPercentage = Number(commercialGFAPercentage) + Number(state.residentialGFAPercentage)
+    if (totalGFAPercentage > 100)
     {
-      console.log('___state: 41');
-      const maxAvailable = 100 - state.residentialGFAPercentage
-      setState({...state, commercialGFAPercentage: maxAvailable})
+      // const maxAvailable = 100 - state.residentialGFAPercentage
+      // setState({...state, commercialGFAPercentage: maxAvailable})
+      setErrorState({...errorState, commercialGFAPercentage: 'Total Percentage Must Not Exceed 100%'});
       return;
     }
+    else
+    {
+      setErrorState({...errorState, commercialGFAPercentage: null});
+      setState({...state, commercialGFAPercentage})
+      updateScenarioCommercialGFAPercentageApi({commercialGFAPercentage}, state.id);
+    }
 
-    console.log('___state: 10');
-    setState({...state, commercialGFAPercentage})
+  }
+
+  function handleNFAAreaAllocMethod(nfaAreaAllocMethod)
+  {
+    setState({...state, nfaAreaAllocMethod});
+    updateScenarioNFAAreaAllocMethodApi({nfaAreaAllocMethod}, state.id);
   }
 
   function handleResidentialNFANumberChange(residentialNFANumber)
@@ -334,12 +495,17 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
       // return
     if (Number(residentialNFANumber) > Number(state.residentialGFANumber))
     {
-      setState({...state, residentialNFANumber: Number(state.residentialGFANumber)})
+      // setState({...state, residentialNFANumber: Number(state.residentialGFANumber)})
+      setErrorState({...errorState, residentialNFANumber: 'Must not Exceed Residential GFA'});
       return;
     }
+    else
+    {
+      setErrorState({...errorState, residentialNFANumber: null});
+      setState({...state, residentialNFANumber});
+      updateScenarioResidentialNFANumberApi({residentialNFANumber}, state.id);
+    }
 
-    console.log('___state: 21');
-    setState({...state, residentialNFANumber})
   }
 
   function handleResidentialNFAPercentageChange(residentialNFAPercentage)
@@ -347,10 +513,15 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
     // if (residentialGFAPercentage)
     // regex
       // return
+    if(residentialNFAPercentage > 100)
+    {
+      setErrorState({...errorState, residentialNFANumber: 'Must not Exceed 100%'});
 
-    const newResidentialNFAPercentage = residentialNFAPercentage < 100 ? residentialNFAPercentage : 100;
-    console.log('___state: 10');
-    setState({...state, residentialNFAPercentage: newResidentialNFAPercentage})
+    }
+    // const newResidentialNFAPercentage = residentialNFAPercentage < 100 ? residentialNFAPercentage : 100;
+
+    setState({...state, residentialNFAPercentage})
+    updateScenarioResidentialNFAPercentageApi({residentialNFAPercentage}, state.id);
   }
 
   function handleCommercialNFANumberChange(commercialNFANumber)
@@ -360,12 +531,17 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
       // return
     if (Number(commercialNFANumber) > Number(state.commercialGFANumber))
     {
-      setState({...state, commercialNFANumber: Number(state.commercialGFANumber)})
+      setErrorState({...errorState, commercialNFANumber: 'Must not Exceed Commercial GFA'});
+      // setState({...state, commercialNFANumber: Number(state.commercialGFANumber)});
       return;
     }
+    else
+    {
+      setErrorState({...errorState, commercialNFANumber: null});
+      setState({...state, commercialNFANumber});
+      updateScenarioCommercialNFANumberApi({commercialNFANumber}, state.id);
+    }
 
-    console.log('___state: 21');
-    setState({...state, commercialNFANumber})
   }
 
   function handleCommercialNFAPercentageChange(commercialNFAPercentage)
@@ -373,9 +549,17 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
     // if (residentialGFAPercentage)
     // regex
       // return
-      const newCommercialNFAPercentage = commercialNFAPercentage < 100 ? commercialNFAPercentage : 100;
-      console.log('___state: 10');
-      setState({...state, commercialNFAPercentage: newCommercialNFAPercentage})
+      // const newCommercialNFAPercentage = commercialNFAPercentage < 100 ? commercialNFAPercentage : 100;
+      if(commercialNFAPercentage > 100)
+      {
+        setErrorState({...errorState, commercialNFAPercentage: 'Must not Exceed 100%'});
+      }
+      else
+      {
+        setErrorState({...errorState, commercialNFAPercentage: null});
+        setState({...state, commercialNFAPercentage});
+        updateScenarioCommercialNFAPercentageApi({commercialNFAPercentage}, state.id);
+      }
   }
 
   const TextArea = styled(TextField)({
@@ -423,7 +607,7 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
             // value={scenarioState.scenarioName}
             // onChange={e => dispatchScenarioAction({ type: 'SET_SCENARIO_NAME', payload: e.target.value })}
             value={state.name}
-            onChange={e => setState({...state, name: e.target.value})}
+            onChange={e => handleScenarioNameChange(e.target.value)}
             placeholder={'Scenario No.1'}
           />
         </Grid>
@@ -435,7 +619,7 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
             // value={scenarioState.scenarioNote}
             // onChange={e => dispatchScenarioAction({ type: 'SET_SCENARIO_NOTE', payload: e.target.value })}
             value={state.note}
-            onChange={e => setState({...state, note: e.target.value})}
+            onChange={e => handleScenarioNoteChange(e.target.value)}
             placeholder='Write a message...'
             multiline
             rows={4}  
@@ -465,8 +649,8 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
             name='tag'
             // value={scenarioState.scenarioStatusTag}
             // onChange={e => dispatchScenarioAction({ type: 'SET_SCENARIO_TAG', payload: e.target.value})}
-            value={state.statusTag}
-            onChange={e => setState({...state, statusTag: e.target.value})}
+            value={state.statusTag.id}
+            onChange={e => handleScenarioTagChange(e.target.value)}
             list={state.statusTags}
           />
         </Grid>
@@ -480,7 +664,7 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
               // value={scenarioState.developmentType}
               // onChange={e => dispatchScenarioAction({type : 'SET_SCENARIO_DEVELOPMENT_TYPE', payload: e.target.value})}
               value={state.developmentType}
-              onChange={e => setState({...state, developmentType: e.target.value})}
+              onChange={e => handleScenarioDevelopmentTypeChange(e.target.value)}
               IconComponent={() => <KeyboardArrowDown sx={{ color: '#lightgray' }} />}
             >
                 { DEVELOPMENT_TYPES.map((item) => (
@@ -506,7 +690,7 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
             // value={scenarioState.developmentStrategy}
             // onChange={e => dispatchScenarioAction({type: 'SET_SCENARIO_DEVELOPMENT_STRATEGY', payload: e.target.value})}
             value={state.developmentStrategy}
-            onChange={e => setState({...state, developmentStrategy: e.target.value})}
+            onChange={e => handleScenarioDevelopmentStrategyChange(e.target.value)}
             list={DEVELOPMENT_STRATEGIES}
           />
         </Grid>
@@ -518,7 +702,7 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
             // value={scenarioState.unitType}
             // onChange={e => dispatchScenarioAction({type: 'SET_SCENARIO_UNIT_TYPE', payload: e.target.value})}
             value={state.unitType}
-            onChange={e => setState({...state, unitType: e.target.value})}
+            onChange={e => handleScenarioUnitTypeChange(e.target.value)}
             list={UNIT_TYPES}
             />
         </Grid>
@@ -530,7 +714,7 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
             // value={scenarioState.endUse}
             // onChange={e => dispatchScenarioAction({type: 'SET_SCENARIO_END_USE', payload: e.target.value})}
             value={state.endUse}
-            onChange={e => setState({...state, endUse: e.target.value})}
+            onChange={e => handleScenarioEndUseChange(e.target.value)}
             list={END_USES}
           />
         </Grid>
@@ -540,22 +724,22 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
         <p>Comming Soon</p>
 
         <Grid size={12}>
-          <ForgeField
+          <TextField
             name='land_area'
             label='Land Area'
-            // value={scenarioState.landArea}
-            // onChange={e => dispatchScenarioAction({type: 'SET_SCENARIO_LAND_AREA', payload: e.target.value})}
-            // disabled={scenarioState.gfaCalcMethod != 'FSI-Based'}
             value={state.landArea}
-            onChange={e => setState({...state, landArea: e.target.value})}
             type='decimal'
-            disabled={state.gfaCalcMethod != 'FSI-Based'}
             InputProps={{
               endAdornment: (
                 <UnitInputAdornment position='end'>
                   {getUnit()}
                 </UnitInputAdornment>
               ),
+            }}
+            slotProps={{
+              input: {
+                readOnly: true
+              }
             }}
           />
         </Grid>
@@ -567,7 +751,7 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
             // value={scenarioState.gfaCalcMethod}
             // onChange={e => dispatchScenarioAction({type: 'SET_SCENARIO_GFA_CALC_METHOD', payload: e.target.value})}
             value={state.gfaCalcMethod}
-            onChange={e => setState({...state, gfaCalcMethod: e.target.value})}
+            onChange={e => handleGFACalcMethodChange(e.target.value)}
             list={GFA_CALC_METHODS}
           />
         </Grid>
@@ -580,7 +764,7 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
             // onChange={e => dispatchScenarioAction({type: 'SET_SCENARIO_FSI', payload: e.target.value})}
             // disabled={scenarioState.gfaCalcMethod != 'FSI-Based'}
             value={state.fsi}
-            onChange={e => setState({...state, fsi: e.target.value})}
+            onChange={e => handleFSIChange(e.target.value)}
             disabled={state.gfaCalcMethod != 'FSI-Based'}
             type='decimal'
             />
@@ -596,7 +780,7 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
             // onChange={e => dispatchScenarioAction({type: 'SET_SCENARIO_GFA', payload: e.target.value})}
             // disabled={scenarioState.gfaCalcMethod != 'Manual'}
             value={state.gfa}
-            onChange={e => setState({...state, gfa: e.target.value})}
+            onChange={e => handleGFAChange(e.target.value)}
             type='decimal'
             disabled={state.gfaCalcMethod != 'Manual'}
             InputProps={{
@@ -616,12 +800,12 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
             // value={scenarioState.areaAllocMethod}
             // onChange={e => dispatchScenarioAction({type: 'SET_SCENARIO_AREA_ALLOC_METHOD', payload: e.target.value})}
             value={state.areaAllocMethod}
-            onChange={e => setState({...state, areaAllocMethod: e.target.value})}
+            onChange={e => handleAreaAllocMethodChange(e.target.value)}
             list={AREA_ALLOC_METHODS}
           />
         </Grid>
         <Grid size={6}>
-          <ForgeField
+          <TextField
             name='residential_gfa_number'
             label='Residential GFA Number'
             value={state.residentialGFANumber}
@@ -640,11 +824,13 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
                 </UnitInputAdornment>
               ),
             }}
+            helperText={errorState.residentialGFANumber}
+            error={errorState.residentialGFANumber !== null}
           />
         </Grid>
 
         <Grid size={6}>
-          <ForgeField
+          <TextField
             name='residential_gfa_percentage'
             label='Residential GFA %'
             value={state.residentialGFAPercentage}
@@ -662,6 +848,8 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
                 </UnitInputAdornment>
               ),
             }}
+            helperText={errorState.residentialGFAPercentage}
+            error={errorState.residentialGFAPercentage !== null}
           />
         </Grid>
 
@@ -715,7 +903,7 @@ export function OverviewTab( {initialState, handleScenarioSave} ) {
             label='NFA - Area Allocation Method'
             name='nfa_area_alloc_method'
             value={state.nfaAreaAllocMethod}
-            onChange={e => setState({...state, nfaAreaAllocMethod: e.target.value})}
+            onChange={e => handleNFAAreaAllocMethod(e.target.value)}
             list={NFA_AREA_ALLOC_METHODS}
           />
         </Grid>

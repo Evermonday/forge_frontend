@@ -1,6 +1,6 @@
 import { Outlet, useNavigate } from 'react-router-dom';
 import ProjectCard from './ScenarioCard';
-import { Button, List, ListItem, Typography } from '@mui/material';
+import { Button, List, ListItem, TextField, Typography } from '@mui/material';
 import Box from '@mui/material/Box';
 import { useState, use, useEffect, Suspense } from 'react';
 import { AppContext } from '../../contexts/AppContext'
@@ -11,7 +11,8 @@ import {
   FormControlLabel,
   Radio,
 } from '@mui/material';
-import { createScenarioFromScratchApi, getScenariosApi } from '../../configs/api';
+import { createScenarioFromScratchApi, getProjectApi, getScenariosApi, updateProjectLandAreaApi } from '../../configs/api';
+import { ForgeFieldLabel } from '../../components/ForgeForm';
 
 function ParentComponent({ unit, setUnit }) {
   console.log('here')
@@ -70,7 +71,8 @@ function NoChildComponent({ unit }) {
 
 export default function ProjectHome() {
   const [unit, setUnit] = useState('metric'); // metric, imperial
-  const [scenarios, setScenarios] = useState([]); // metric, imperial
+  const [scenarios, setScenarios] = useState([]);
+  const [project, setProject] = useState({landArea: 0});
   const navigate = useNavigate();
   
   
@@ -81,9 +83,18 @@ export default function ProjectHome() {
       setScenarios(scenarioResponse);
     }
 
-    fetchScenarios()
+    fetchScenarios();
+  }, []);
+
+  useEffect( () =>{
+    async function getProject(){
+      const response = await getProjectApi();
+      setProject(response.data);
+    }
+
+    getProject();
   }, [])
-  
+
   async function handleScenarioCreation()
   {
     const response = await createScenarioFromScratchApi();
@@ -92,9 +103,22 @@ export default function ProjectHome() {
     navigate(`/scenario/${scenarioId}`);
   }
 
+  async function handleProjectLandAreaChange(landArea)
+  {
+    setProject({...project, landArea})
+    await updateProjectLandAreaApi({landArea});
+  }
+
   return (
     <Box>
       <Button onClick={handleScenarioCreation}>From Scratch</Button>
+      <FormControl>
+        <ForgeFieldLabel>{"Project's Land Area:"}</ForgeFieldLabel>
+        <TextField
+          value={project.landArea}
+          onChange={e => handleProjectLandAreaChange(e.target.value)}
+        />
+      </FormControl>
       <List>
           {scenarios.map(scenario =>
             <ListItem key={scenario.id} value={scenario.id}>

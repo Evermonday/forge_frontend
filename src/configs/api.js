@@ -42,14 +42,45 @@ export const updateTagApi = (tagId, newTagName) =>
 export const getTagApi = () => apiClient.get('tag');
 
 
+// Project
+export const getProjectApi = () => apiClient.get('project');
+export const updateProjectLandAreaApi = landArea => apiClient.put(`project/landArea`, landArea);
+
+
+// Overview
 export const getScenariosApi = () => apiClient.get(`scenario`);
 export const getScenarioApi = scenarioId => apiClient.get(`scenario/${scenarioId}`);
+
+//DELETE:
 export const createScenarioApi = scenarioCreationData =>
   apiClient.post(
     `scenario`,
     scenarioCreationData
   );
 export const createScenarioFromScratchApi = () => apiClient.post('scenario')
+export const updateScenarioName = (name, scenarioId) => apiClient.put(`scenario/${scenarioId}/name`, name);
+export const updateScenarioNote = (note, scenarioId) => apiClient.put(`scenario/${scenarioId}/note`, note);
+export const updateScenarioTag = (tagId, scenarioId) => apiClient.put(`scenario/${scenarioId}/tag`, tagId);
+export const updateScenarioDevelopmentType = (developmentType, scenarioId) => apiClient.put(`scenario/${scenarioId}/developmentType`, developmentType);
+export const updateScenarioDevelopmentStrategy = (developmentStrategy, scenarioId) => apiClient.put(`scenario/${scenarioId}/developmentStrategy`, developmentStrategy);
+export const updateScenarioUnitType = (unitType, scenarioId) => apiClient.put(`scenario/${scenarioId}/unitType`, unitType);
+export const updateScenarioEndUse = (endUse, scenarioId) => apiClient.put(`scenario/${scenarioId}/endUse`, endUse);
+export const updateScenarioGFACalcMethodApi = (gfaCalcMethod, scenarioId) => apiClient.put(`scenario/${scenarioId}/gfaCalcMethod`, gfaCalcMethod);
+export const updateScenarioFSIApi = (fsi, scenarioId) => apiClient.put(`scenario/${scenarioId}/fsi`, fsi);
+export const updateScenarioGFAApi = (gfa, scenarioId) => apiClient.put(`scenario/${scenarioId}/gfa`, gfa);
+
+export const updateScenarioAreaAllocMethodApi = (areaAllocMethod, scenarioId) => apiClient.put(`scenario/${scenarioId}/areaAllocMethod`, areaAllocMethod);
+export const updateScenarioResidentialGFANumberApi = (residentialGFANumber, scenarioId) => apiClient.put(`scenario/${scenarioId}/residentialGFANumber`, residentialGFANumber);
+export const updateScenarioResidentialGFAPercentageApi = (residentialGFAPercentage, scenarioId) => apiClient.put(`scenario/${scenarioId}/residentialGFAPercentage`, residentialGFAPercentage);
+export const updateScenarioCommercialGFANumberApi = (commercialGFANumber, scenarioId) => apiClient.put(`scenario/${scenarioId}/commercialGFANumber`, commercialGFANumber);
+export const updateScenarioCommercialGFAPercentageApi = (commercialGFAPercentage, scenarioId) => apiClient.put(`scenario/${scenarioId}/commercialGFAPercentage`, commercialGFAPercentage);
+
+export const updateScenarioNFAAreaAllocMethodApi = (nfaAreaAllocMethod, scenarioId) => apiClient.put(`scenario/${scenarioId}/nfaAreaAllocMethod`, nfaAreaAllocMethod);
+export const updateScenarioResidentialNFANumberApi = (residentialNFANumber, scenarioId) => apiClient.put(`scenario/${scenarioId}/residentialNFANumber`, residentialNFANumber);
+export const updateScenarioResidentialNFAPercentageApi = (residentialNFAPercentage, scenarioId) => apiClient.put(`scenario/${scenarioId}/residentialNFAPercentage`, residentialNFAPercentage);
+export const updateScenarioCommercialNFANumberApi = (commercialNFANumber, scenarioId) => apiClient.put(`scenario/${scenarioId}/commercialNFANumber`, commercialNFANumber);
+export const updateScenarioCommercialNFAPercentageApi = (commercialNFAPercentage, scenarioId) => apiClient.put(`scenario/${scenarioId}/commercialNFAPercentage`, commercialNFAPercentage);
+
 
 export const updateScenarioApi = (scenarioUpdateData, scenarioId) =>
   apiClient.put(`scenario/${scenarioId}`, scenarioUpdateData);

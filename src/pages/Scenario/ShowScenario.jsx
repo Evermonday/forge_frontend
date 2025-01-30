@@ -1,18 +1,17 @@
 import { useEffect, useState } from "react";
 import { OverviewTab } from "./Tabs/OverviewTab";
-import { getScenarioApi, getTagApi, updateScenarioApi } from "../../configs/api";
+import { getScenarioApi, getTagApi, updateScenarioApi, getProjectApi } from "../../configs/api";
 import { useParams } from "react-router-dom";
 import { scenarioInitialState } from "./ScenarioFromScratch";
 
 export default function ShowScenario()
 {
-  const landArea = 1000
   const { scenarioId } = useParams();
   const [fetchedState, setFetchedState] = useState({
     ...scenarioInitialState,
     statusTag: {'name': '', 'id': 0},
     statusTags: [{'name': '', 'id': 0}],
-    landArea,
+    landArea: 0,
   });
 
 
@@ -24,11 +23,15 @@ export default function ShowScenario()
       const scenarioResponse = await getScenarioApi(scenarioId)
       const fetchedScenario = scenarioResponse.data;
 
+      const projectResponse = await getProjectApi();
+      const fetchedProject =  projectResponse.data;
+
       setFetchedState({
         ...fetchedState,
         ...fetchedScenario,
         statusTag: fetchedScenario.tag,
-        statusTags: fetchedTags
+        statusTags: fetchedTags,
+        landArea: fetchedProject.landArea
       });
     }
 
