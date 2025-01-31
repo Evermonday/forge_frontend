@@ -253,9 +253,10 @@ console.log("___-")
 //     }
 //   }, [state.commercialGFANumber, state.gfa])
 
+  // residential_nfa_percentage
   useEffect(() =>
     {
-console.log('STATE___: 10');
+console.log('STATE___: 20');
     if(state.nfaAreaAllocMethod != 'Percentile' &&
       (state.endUse == 'Mixed Use' || state.endUse == 'Residential'))
     {
@@ -265,11 +266,12 @@ console.log('STATE___: 10');
       setState(prevState => ({...prevState, residentialNFAPercentage}))
 
     }
-  }, [state.residentialNFANumber])
+  }, [state.residentialNFANumber, state.residentialGFAPercentage]);
   
+  // residential_nfa_number
   useEffect(() =>
     {
-console.log('STATE___: 11');
+console.log('STATE___: 21');
       if(state.nfaAreaAllocMethod != 'Manual' &&
         (state.endUse == 'Mixed Use' || state.endUse == 'Residential'))
       {
@@ -278,11 +280,12 @@ console.log('STATE___: 11');
         setState(prevState => ({...prevState, residentialNFANumber}))
   
       }
-    }, [state.residentialNFAPercentage])
+    }, [state.residentialNFAPercentage, state.residentialGFANumber]);
 
+    //commercial_nfa_percentage
   useEffect(() =>
     {
-console.log('STATE___: 12');
+console.log('STATE___: 22');
     if(state.nfaAreaAllocMethod != 'Percentile' &&
       (state.endUse == 'Mixed Use' || state.endUse == 'Commercial'))
     {
@@ -292,11 +295,24 @@ console.log('STATE___: 12');
       setState(prevState => ({...prevState, commercialNFAPercentage}))
 
     }
-  }, [state.commercialNFANumber])
+  }, [state.commercialNFANumber, state.commercialGFANumber]);
+
 
   useEffect(() =>
     {
-console.log('STATE___: 13');
+console.log('STATE___: 25');
+    if(state.endUse == 'Mixed Use' || state.endUse == 'Commercial')
+    {
+      const commercialGFANumber = Number(state.commercialGFANumber);
+      const commercialNFANumber =  new Decimal(commercialGFANumber).times(state.commercialNFAPercentage / 100);
+      setState(prevState => ({...prevState, commercialNFANumber}))
+    }
+  }, [state.commercialGFANumber]);
+
+    //commercial_nfa_number
+  useEffect(() =>
+    {
+console.log('STATE___: 23');
       if(state.nfaAreaAllocMethod != 'Manual' &&
         (state.endUse == 'Mixed Use' || state.endUse == 'Commercial'))
       {
@@ -305,7 +321,7 @@ console.log('STATE___: 13');
         setState(prevState => ({...prevState, commercialNFANumber}))
   
       }
-    }, [state.commercialNFAPercentage])
+    }, [state.commercialNFAPercentage]);
 
 
 
@@ -424,6 +440,7 @@ console.log('STATE___: 13');
     const totalGFAPercentage = Number(residentialGFAPercentage) + Number(state.commercialGFAPercentage)
     if (totalGFAPercentage > 100)
     {
+      console.log('asdfsdfs')
       // const maxAvailable = 100 - state.commercialGFAPercentage
       // setState({...state, residentialGFAPercentage: maxAvailable})
       setErrorState({...errorState, residentialGFAPercentage: 'Total Percentage Must Not Exceed 100%'});
@@ -516,7 +533,7 @@ console.log('STATE___: 13');
     if(residentialNFAPercentage > 100)
     {
       setErrorState({...errorState, residentialNFANumber: 'Must not Exceed 100%'});
-
+      return;
     }
     // const newResidentialNFAPercentage = residentialNFAPercentage < 100 ? residentialNFAPercentage : 100;
 
@@ -854,7 +871,7 @@ console.log('STATE___: 13');
         </Grid>
 
         <Grid size={6}>
-          <ForgeField
+          <TextField
             name='commercial_gfa_number'
             label='Commercial GFA Number'
             value={state.commercialGFANumber}
@@ -876,7 +893,7 @@ console.log('STATE___: 13');
         </Grid>
 
         <Grid size={6}>
-          <ForgeField
+          <TextField
             name='commercial_gfa_percentage'
             label='Commercial GFA %'
             value={state.commercialGFAPercentage}
@@ -909,7 +926,7 @@ console.log('STATE___: 13');
         </Grid>
 
         <Grid size={6}>
-          <ForgeField
+          <TextField
             name='residential_nfa_number'
             label='Residential NFA Number'
             value={state.residentialNFANumber}
@@ -931,7 +948,7 @@ console.log('STATE___: 13');
         </Grid>
 
         <Grid size={6}>
-          <ForgeField
+          <TextField
             name='residential_nfa_percentage'
             label='Residential NFA %'
             value={state.residentialNFAPercentage}
@@ -953,7 +970,7 @@ console.log('STATE___: 13');
         </Grid>
 
         <Grid size={6}>
-          <ForgeField
+          <TextField
             name='commercial_nfa_number'
             label='Commercial NFA Number'
             value={state.commercialNFANumber}
@@ -975,7 +992,7 @@ console.log('STATE___: 13');
         </Grid>
 
         <Grid size={6}>
-          <ForgeField
+          <TextField
             name='commercial_nfa_percentage'
             label='Commercial NFA %'
             value={state.commercialNFAPercentage}
