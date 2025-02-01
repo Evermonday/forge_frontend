@@ -193,12 +193,41 @@ export const ForgeSelect = ({ label, name, onChange, value, list }) => {
           { list.map((item) => (
               <MenuItem
                 key={item.id}
-                value={item}
+                value={item.id}
                 sx={{
                   fontFamily: 'League Spartan',
                 }}
               >
                 {item.name}
+              </MenuItem>
+            ))
+          }
+      </CustomSelect>
+    </FormControl>
+  );
+};
+
+//TODO: Count the list, determine the type
+export const EnumSelect = ({ label, onChange, selectedItem, list }) => {
+  return (
+    <FormControl fullWidth>
+      <ForgeFieldLabel>{label}</ForgeFieldLabel>
+      <CustomSelect
+        // id={value.id}
+        name={label}
+        value={selectedItem}
+        onChange={onChange}
+        IconComponent={() => <KeyboardArrowDown sx={{ color: '#lightgray' }} />}
+      >
+          { list.map((item) => (
+              <MenuItem
+                key={item}
+                value={item}
+                sx={{
+                  fontFamily: 'League Spartan',
+                }}
+              >
+                {item}
               </MenuItem>
             ))
           }
