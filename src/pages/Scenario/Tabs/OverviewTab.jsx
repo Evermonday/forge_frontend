@@ -774,7 +774,7 @@ console.log('STATE___: 23');
         </Grid>
 
         <Grid size={6}>
-          <ForgeField
+          <TextField
             name='fsi'
             label='FSI'
             // value={scenarioState.fsi}
@@ -790,7 +790,7 @@ console.log('STATE___: 23');
         <ForgeDivider align='left'>GFA - Gross Floor Area</ForgeDivider>
 
         <Grid size={12}>
-          <ForgeField
+          <TextField
             name='gfa'
             label='GFA'
             // value={scenarioState.gfa}
@@ -1012,10 +1012,6 @@ console.log('STATE___: 23');
             }}
           />
         </Grid>
-        <Box sx={{ height: '90px' }}>
-            <Button onClick={() => handleScenarioSave(state)}>Save</Button>
-
-        </Box>
       </Grid>
       <SummaryBox>
         <Grid container spacing={2} sx={{ margin: '0 auto' }}>
