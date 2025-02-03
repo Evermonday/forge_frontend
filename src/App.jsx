@@ -227,6 +227,7 @@ export default function App() {
                         <Route path="scenario/:scenarioId" >
                           <Route element={<ShowScenario />} index />
                           <Route path="overview" element={<ShowScenario />} />
+                          <Route path="schedule" element={<ScheduleTab />} />
                         </Route>
                       </Route>
 

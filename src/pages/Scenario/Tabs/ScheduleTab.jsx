@@ -7,7 +7,9 @@ import AddIcon from '@mui/icons-material/Add';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { SCHEDULING_MODE_MANUAL, SCHEDULING_MODES, SCHEDULING_MODE_AUTO, TASK_RELATION_TYPE_FS } from '../../../constants/ScheduleTab'
 import {
+  EnumSelect,
   ForgeField,
   ForgeFieldLabel,
   ForgeSelect,
@@ -17,6 +19,14 @@ import dayjs from 'dayjs';
 import { GridRowModes } from '@mui/x-data-grid';
 
 import { ForgeScheduleDataGrid } from '../../../components/ForgeScheduleDataGrid';
+import {
+  createTaskApi,
+  getScenarioApi,
+  getScenarioTasksApi,
+  updateStartDateApi
+} from '../../../configs/api';
+import { useParams } from 'react-router-dom';
+import SortableDataGrid from '../../../components/SortableDataGrid';
 
 const ModalDatePicker = ({
   name,
@@ -26,10 +36,13 @@ const ModalDatePicker = ({
   minDate,
   disabled,
 }) => {
+
+  const [localValue, setLocalValue] = useState(value);
+  
   useEffect(() => {
     setLocalValue(value);
   }, [value]);
-  const [localValue, setLocalValue] = useState(value);
+  
   const localOnChange = (newValue, context) => {
     const e = {
       target: {
@@ -42,6 +55,7 @@ const ModalDatePicker = ({
     console.log('NEWVALUE', newValue);
     setLocalValue(newValue);
   };
+
   return (
     <>
       <ForgeFieldLabel>{label}</ForgeFieldLabel>
@@ -61,52 +75,33 @@ const ModalDatePicker = ({
   );
 };
 
-const initialRows = [
-  {
-    id: 1,
-    name: 'Building sample data',
-    mode: 'auto',
-    duration: 8,
-    start_date: dayjs('2024-04-10 19:18:17.040+02:00').format('MMMM YYYY'),
-    end_date: dayjs('2024-07-10 19:18:17.040+02:00').format('MMMM YYYY'),
-    related_task: null,
-    related_type: null,
-    lag: 10,
-  },
-  {
-    id: 2,
-    name: 'Building sample data',
-    mode: 'auto',
-    duration: 8,
-    start_date: dayjs('2024-06-18 19:18:17.040+02:00').format('MMMM YYYY'),
-    end_date: dayjs('2024-09-18 19:18:17.040+02:00').format('MMMM YYYY'),
-    related_task: null,
-    related_type: null,
-    lag: 10,
-  },
-  {
-    id: 3,
-    name: 'Building sample data',
-    mode: 'edit',
-    duration: 8,
-    start_date: dayjs().format('MMMM YYYY'),
-    end_date: dayjs().format('MMMM YYYY'),
-    related_task: null,
-    related_type: null,
-    lag: 10,
-  },
-];
 
 export function ScheduleTab({ unit }) {
+  const initialRows = [
+    {
+      id: 1,
+      name: 'Building sample data',
+      mode: SCHEDULING_MODE_AUTO,
+      duration: 8,
+      startDate: dayjs('2024-04-10 19:18:17.040+02:00').format('MMMM YYYY'),
+      endDate: dayjs('2024-07-10 19:18:17.040+02:00').format('MMMM YYYY'),
+      related_task: null,
+      related_type: null,
+      predecessors: []
+    }
+  ];
+
+  const { scenarioId } = useParams();
   const [startDate, setStartDate] = useState();
   const [rows, setRows] = useState(initialRows);
   const [rowModesModel, setRowModesModel] = useState({});
   const [lastId, setLastId] = useState(initialRows.length);
   const [newRowModalOpen, setNewRowModalOpen] = useState(false);
   const [modalError, setModalError] = useState(false);
+  const [scenarioStart, setScenarioStart] = useState(dayjs());
   const [newRowData, setNewRowData] = useState({
     name: '',
-    mode: 'Auto',
+    mode: SCHEDULING_MODE_AUTO,
     duration: null,
     start_date: startDate,
     end_date: startDate,
@@ -116,12 +111,24 @@ export function ScheduleTab({ unit }) {
   });
 
   useEffect(() => {
-    console.log('inside useEffect');
+    async function getScenario()
+    {
+      const response = await getScenarioApi(scenarioId);
+      const scenario = response.data
+      const startDate = dayjs(scenario.startDate);
+      setScenarioStart(startDate);
+    }
+    getScenario();
 
-    return () => {
-      console.log('return useeffect!');
-    };
-  });
+    
+    async function getScenarioTasks()
+    {
+      const response = await getScenarioTasksApi(scenarioId);
+      setRows(response.data);
+    }
+    getScenarioTasks();
+
+  }, []);
 
   useEffect(() => {
     let new_end_date = newRowData.start_date;
@@ -141,6 +148,10 @@ export function ScheduleTab({ unit }) {
   }, [newRowData.lag, newRowData.duration, newRowData.start_date]);
 
   const handleStartDateChange = (value, context) => {
+    if(value < scenarioStart)
+    {
+      console.log('Do you want to change scenario\'s start date?');
+    }
     console.log('value context', value, context);
     //TODO: only set new date after changing both month and years
     setStartDate(value);
@@ -150,12 +161,28 @@ export function ScheduleTab({ unit }) {
     });
   };
 
-  const handleAddItem = () => {
-    if (startDate) {
-      setNewRowModalOpen(true);
-    } else {
-      alert('You must specify start date value');
-    }
+  function handlescenarioStartChange(newProjectDate)
+  {
+    // newProjectDate = dayjs(newProjectDate)
+    setScenarioStart(newProjectDate);
+
+    newProjectDate = dayjs(newProjectDate)
+      .startOf('month')
+      .format('YYYY-MM-DD');
+    updateStartDateApi({startDate: newProjectDate}, scenarioId);
+  }
+
+  async function handleAddItem () {
+    const response = await createTaskApi(scenarioId);
+    const newRow = response.data;
+    const newRows = rows.concat(newRow);
+    setRows(newRows);
+    console.log(newRows)
+    // if (startDate) {
+      // setNewRowModalOpen(true);
+    // } else {
+    //   alert('You must specify start date value');
+    // }
   };
   const handleNewRowModalClose = () => {
     const cfrm = confirm(
@@ -185,14 +212,17 @@ export function ScheduleTab({ unit }) {
     setNewRowModalOpen(false);
     setNewRowData({
       name: '',
-      mode: 'Auto',
+      mode: SCHEDULING_MODE_AUTO,
       duration: null,
       start_date: startDate,
       end_date: startDate,
       related_task: null,
-      related_type: 'FS',
+      related_type: TASK_RELATION_TYPE_FS,
       lag: null,
     });
+    
+    
+    createTaskApi(scenarioId, newRowData)
   };
 
   const handleModalInput = (e) => {
@@ -204,7 +234,7 @@ export function ScheduleTab({ unit }) {
 
     switch (fieldName) {
       case 'mode':
-        if (fieldValue == 'Auto') {
+        if (fieldValue == SCHEDULING_MODE_AUTO) {
           if (newRowData.related_task && newRowData.related_type) {
             setNewRowData({
               ...newRowData,
@@ -218,7 +248,7 @@ export function ScheduleTab({ unit }) {
               ['start_date']: startDate,
             });
           }
-        } else if (fieldValue == 'Manual') {
+        } else if (fieldValue == SCHEDULING_MODE_MANUAL) {
           setNewRowData({
             ...newRowData,
             ['mode']: fieldValue,
@@ -238,7 +268,7 @@ export function ScheduleTab({ unit }) {
         } else {
           console.log('Record found:', relatedTask);
 
-          if (newRowData.related_type == 'FS') {
+          if (newRowData.related_type == TASK_RELATION_TYPE_FS) {
             console.log('newRowData', newRowData);
             console.log(dayjs(relatedTask.end_date, 'MMMM YYYY'));
             console.log('lag', newRowData.lag);
@@ -361,9 +391,22 @@ export function ScheduleTab({ unit }) {
             </Button>
           </Stack>
         </Grid>
-        <Grid sx={{ mt: 4 }}>
+        <Grid>
           <ForgeFieldLabel sx={{ display: 'inline-block', mt: 2, mr: 2 }}>
-            Start Date:
+            Project Start Date:
+          </ForgeFieldLabel>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DatePicker
+              label=""
+              views={['year', 'month']}
+              value={scenarioStart}
+              onChange={handlescenarioStartChange}
+            />
+          </LocalizationProvider>
+        </Grid>
+        {/* <Grid sx={{ mt: 4 }}>
+          <ForgeFieldLabel sx={{ display: 'inline-block', mt: 2, mr: 2 }}>
+            Task Start Date:
           </ForgeFieldLabel>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
@@ -371,19 +414,23 @@ export function ScheduleTab({ unit }) {
               onChange={handleStartDateChange}
               views={['year', 'month']}
               value={startDate}
-              minDate={dayjs('2022-01-01')}
+              minDate={scenarioStart}
             />
           </LocalizationProvider>
-        </Grid>
-        <ForgeScheduleDataGrid
+        </Grid> */}
+        {/* <ForgeScheduleDataGrid
           minDate={startDate}
           rows={rows}
           rowModesModel={rowModesModel}
           handleDeleteClick={handleRowDeleteClick}
           processRowUpdate={processRowUpdate}
+        /> */}
+        <SortableDataGrid
+          rows={rows}
         />
       </Grid>
 
+      {/* DELETE: */}
       <Dialog
         open={newRowModalOpen}
         onClose={handleNewRowModalClose}
@@ -418,12 +465,10 @@ export function ScheduleTab({ unit }) {
             value={newRowData.name}
             onChange={handleModalInput}
           />
-          <ForgeSelect
-            id='mode'
-            name='mode'
+          <EnumSelect
             label='Mode'
-            list={['Auto', 'Manual']}
-            value={newRowData.mode}
+            list={SCHEDULING_MODES}
+            selectedItem={newRowData.mode}
             onChange={handleModalInput}
           />
           <ForgeField
@@ -440,7 +485,7 @@ export function ScheduleTab({ unit }) {
             label='Start Date'
             type='number'
             minDate={startDate}
-            disabled={newRowData.mode === 'Auto'}
+            disabled={newRowData.mode === SCHEDULING_MODE_AUTO}
             value={newRowData.start_date}
             onChange={handleModalInput}
           />
@@ -454,7 +499,7 @@ export function ScheduleTab({ unit }) {
             value={newRowData.end_date}
             onChange={handleModalInput}
           />
-          {newRowData.mode === 'Auto' && (
+          {newRowData.mode === SCHEDULING_MODE_AUTO && (
             <ForgeField
               id='related_task'
               name='related_task'
@@ -464,7 +509,7 @@ export function ScheduleTab({ unit }) {
               onChange={handleModalInput}
             />
           )}
-          {newRowData.mode === 'Auto' && (
+          {newRowData.mode === SCHEDULING_MODE_AUTO && (
             <ForgeSelect
               id='related_type'
               name='related_type'
@@ -473,7 +518,7 @@ export function ScheduleTab({ unit }) {
               value={newRowData.related_type}
               list={[
                 { title: 'Start Together (SS)', value: 'SS' },
-                { title: 'Start After (FS)', value: 'FS' },
+                { title: 'Start After (FS)', value: TASK_RELATION_TYPE_FS },
               ]}
               onChange={handleModalInput}
             />

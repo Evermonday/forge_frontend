@@ -81,8 +81,13 @@ export const updateScenarioResidentialNFAPercentageApi = (residentialNFAPercenta
 export const updateScenarioCommercialNFANumberApi = (commercialNFANumber, scenarioId) => apiClient.put(`scenario/${scenarioId}/commercialNFANumber`, commercialNFANumber);
 export const updateScenarioCommercialNFAPercentageApi = (commercialNFAPercentage, scenarioId) => apiClient.put(`scenario/${scenarioId}/commercialNFAPercentage`, commercialNFAPercentage);
 
+export const updateTaskDisplayIdsApi = (taskDisplayIds, scenarioId) => apiClient.put(`scenario/${scenarioId}/taskDisplayIds`, taskDisplayIds);
+export const createTaskApi = scenarioId => apiClient.post(`scenario/${scenarioId}/task`);
+
+// Schedule
+export const getScenarioTasksApi = scenarioId => apiClient.get(`scenario/${scenarioId}/task`);
+export const updateStartDateApi = (startDate, scenarioId) => apiClient.put(`scenario/${scenarioId}/startDate`, startDate);
+
 
 export const updateScenarioApi = (scenarioUpdateData, scenarioId) =>
   apiClient.put(`scenario/${scenarioId}`, scenarioUpdateData);
-
-export const createTaskApi = (scenarioId, taskCreationData) => apiClient.post(`scenario/${scenarioId}/task`, taskCreationData)
