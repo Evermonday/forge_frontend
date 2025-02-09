@@ -427,6 +427,8 @@ export function ScheduleTab({ unit }) {
         /> */}
         <SortableDataGrid
           rows={rows}
+          setRows={setRows}
+          scenarioId={scenarioId}
         />
       </Grid>
 

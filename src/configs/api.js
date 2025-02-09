@@ -83,6 +83,7 @@ export const updateScenarioCommercialNFAPercentageApi = (commercialNFAPercentage
 
 export const updateTaskDisplayIdsApi = (taskDisplayIds, scenarioId) => apiClient.put(`scenario/${scenarioId}/taskDisplayIds`, taskDisplayIds);
 export const createTaskApi = scenarioId => apiClient.post(`scenario/${scenarioId}/task`);
+export const updateTaskApi = (taskId, changedAttribute, value) => apiClient.put(`task/${taskId}/${changedAttribute}`, value);
 
 // Schedule
 export const getScenarioTasksApi = scenarioId => apiClient.get(`scenario/${scenarioId}/task`);
