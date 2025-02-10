@@ -164,58 +164,7 @@ export default function SortableDataGrid ({rows, setRows, scenarioId}) {
             //     />
             //   )
             // }
-        },
-        {
-            field: 'actions',
-            type: 'actions',
-            headerName: 'Actions',
-            width: 100,
-            cellClassName: 'actions',
-            getActions: ({ id }) => {
-              const isInEditMode = rowModesModel[id]?.mode === GridRowModes.Edit;
-      
-              // if (isInEditMode) {
-              //   return [
-              //     <GridActionsCellItem
-              //       icon={<SaveIcon />}
-              //       label="Save"
-              //       sx={{
-              //         color: 'primary.main',
-              //       }}
-              //       // onClick={handleSaveClick(id)}
-              //       onClick={handleOpen}
-              //       key="save"
-              //     />,
-              //     <GridActionsCellItem
-              //       icon={<CancelIcon />}
-              //       label="Cancel"
-              //       className="textPrimary"
-              //       onClick={handleCancelClick(id)}
-              //       color="inherit"
-              //       key="cancel"
-              //     />,
-              //   ];
-              // }
-      
-              return [
-                <GridActionsCellItem
-                  icon={<EditIcon />}
-                  label="Edit"
-                  className="textPrimary"
-                  onClick={handleEditClick(id)}
-                  color="inherit"
-                  key="edit"
-                />,
-                <GridActionsCellItem
-                  icon={<DeleteIcon />}
-                  label="Delete"
-                  onClick={handleDeleteClick(id)}
-                  color="inherit"
-                  key="delete"
-                />,
-              ];
-            },
-          },
+        }
     ];
 
     const [reorderedRows, setReorderedRows] = useState(rows);
@@ -291,9 +240,7 @@ export default function SortableDataGrid ({rows, setRows, scenarioId}) {
   };
   
   const handleProcessRowUpdateError = useCallback((error) => {
-    console.log(error)
-    console.log(error.response.data.exception)
-    if(error.response.data.exception == "App\\Exceptions\\IncompatibleTaskMode")
+    if('exception' in error.response.data && error.response.data.exception == "App\\Exceptions\\IncompatibleTaskMode")
     {
         setSnackbar({ children: "Please First Delete Predecessors.", severity: 'error' });
     }
@@ -312,14 +259,17 @@ export default function SortableDataGrid ({rows, setRows, scenarioId}) {
 
   async function processRowUpdate(newRow) {
     // check predecessor change
-    const predecessors = newRow.predecessors.split(",").map(pred => Number(pred) || null);
-    newRow = {...newRow, predecessors };
+    if(typeof newRow.predecessors == 'string')
+    {
+      const predecessors = newRow.predecessors.split(",").map(pred => Number(pred) || null);
+      newRow = {...newRow, predecessors };
+    }
 
     const updatedRow = { ...newRow, isNew: false};
     const oldRow = rows.filter(row => row.id === newRow.id)[0];
-        
+
     if(_.isEqual(newRow, oldRow)) {
-        return updatedRow;
+      return updatedRow;
     }
 
     setRows(rows.map((row) => (row.id === newRow.id ? updatedRow : row)));
