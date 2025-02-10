@@ -240,6 +240,8 @@ export default function SortableDataGrid ({rows, setRows, scenarioId}) {
   };
   
   const handleProcessRowUpdateError = useCallback((error) => {
+    console.log('error')
+    console.log(error)
     if('exception' in error.response.data && error.response.data.exception == "App\\Exceptions\\IncompatibleTaskMode")
     {
         setSnackbar({ children: "Please First Delete Predecessors.", severity: 'error' });
