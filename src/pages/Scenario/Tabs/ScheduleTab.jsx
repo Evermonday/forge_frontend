@@ -161,7 +161,7 @@ export function ScheduleTab({ unit }) {
     });
   };
 
-  function handlescenarioStartChange(newProjectDate)
+  async function handlescenarioStartChange(newProjectDate)
   {
     // newProjectDate = dayjs(newProjectDate)
     setScenarioStart(newProjectDate);
@@ -169,7 +169,9 @@ export function ScheduleTab({ unit }) {
     newProjectDate = dayjs(newProjectDate)
       .startOf('month')
       .format('YYYY-MM-DD');
-    updateStartDateApi({startDate: newProjectDate}, scenarioId);
+    await updateStartDateApi({startDate: newProjectDate}, scenarioId);
+    const response = await getScenarioTasksApi(scenarioId);
+    setRows(response.data);
   }
 
   async function handleAddItem () {
